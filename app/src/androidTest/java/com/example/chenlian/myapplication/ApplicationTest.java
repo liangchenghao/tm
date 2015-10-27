@@ -3,6 +3,8 @@ package com.example.chenlian.myapplication;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
+import com.example.chenlian.activity.EditActivity;
+
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
@@ -12,7 +14,6 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     }
 
     public static void tryTest(){
-        MainActivity mainActivity = new MainActivity();
-        mainActivity.initData();
+        EditActivity editActivity = new EditActivity();
     }
 }

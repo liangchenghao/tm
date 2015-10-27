@@ -1,20 +1,19 @@
-package com.example.chenlian.myapplication;
+package com.example.chenlian.activity;
 
 import android.app.Activity;
 import android.graphics.Point;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.example.chenlian.camera.CameraInterface;
+import com.example.chenlian.myapplication.R;
 import com.example.chenlian.utils.DisplayUtil;
 import com.example.chenlian.view.CameraSurfaceView;
 
-public class CameraActivity extends Activity implements CameraInterface.CamOpenOverCallback {
+public class CameraOActivity extends Activity implements CameraInterface.CamOpenOverCallback {
     private static final String TAG = "yanzi";
     CameraSurfaceView surfaceView = null;
     ImageButton shutterBtn;
@@ -26,7 +25,7 @@ public class CameraActivity extends Activity implements CameraInterface.CamOpenO
             @Override
             public void run() {
                 // TODO Auto-generated method stub
-                CameraInterface.getInstance().doOpenCamera(CameraActivity.this);
+                CameraInterface.getInstance().doOpenCamera(CameraOActivity.this);
             }
         };
         openThread.start();

@@ -30,6 +30,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         // TODO Auto-generated method stub
+
         Log.i(TAG, "surfaceCreated...");
     }
 
@@ -37,6 +38,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
                                int height) {
         // TODO Auto-generated method stub
+
         Log.i(TAG, "surfaceChanged...");
     }
 

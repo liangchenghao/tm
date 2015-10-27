@@ -1,4 +1,4 @@
-package com.example.chenlian.myapplication;
+package com.example.chenlian.activity;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
