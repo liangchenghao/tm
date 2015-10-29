@@ -2,10 +2,13 @@ package com.example.chenlian.flag;
 
 import android.widget.ImageView;
 
+import java.io.Serializable;
+
 /**
  * Created by chenlian on 10/23/2015.
  */
-public class Actor {
+public class Actor implements Serializable{
+    int id;
     String description;
     int imgID;
 

@@ -6,7 +6,6 @@ package com.example.chenlian.utils;
 public class Utils {
     public static final int RESULT_LOAD_IMAGE = 0;
 
-    public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 
     public static final String CAMERA_TAG = "camera_error";
 }

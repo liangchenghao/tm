@@ -99,7 +99,7 @@ public class HomeActivity extends BaseActivity {
                         startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
                         break;
                     case 3://启动相机
-                        startActivity(new Intent(HomeActivity.this, CameraOActivity.class));
+                        startActivity(new Intent(HomeActivity.this, CameraActivity.class));
                         break;
                 }
                 mDrawerLayout.closeDrawers();

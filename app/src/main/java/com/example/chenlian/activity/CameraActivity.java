@@ -1,117 +1,91 @@
 package com.example.chenlian.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
+import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
+import android.provider.MediaStore;
+import android.view.SurfaceView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.chenlian.myapplication.R;
-import com.example.chenlian.utils.Utils;
-import com.example.chenlian.view.CameraPreview;
+import com.example.chenlian.utils.FileUtil;
+import com.lidroid.xutils.ViewUtils;
+import com.lidroid.xutils.view.annotation.ViewInject;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by chenlian on 10/20/2015.
  */
 public class CameraActivity extends Activity {
 
-    private Camera mCamera;
-    private CameraPreview mPreview;
+    @ViewInject(R.id.iv_result_camera)
+    ImageView img;
 
+    private Camera mCamera;
+    private SurfaceView mPreview;
+    private MediaRecorder mMediaRecorder;
+    private Uri fileUri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+        ViewUtils.inject(this);
 
-        if (checkCameraHardware(this)){
+        // create Intent to take a picture and return control to the calling application
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-            // Create an instance of Camera
-            mCamera = getCameraInstance();
-            // Create our Preview view and set it as the content of our activity.
-            mPreview = new CameraPreview(this, mCamera);
-            FrameLayout preview = (FrameLayout) findViewById(R.id.camera_surfaceview);
-            ImageButton captureButton = (ImageButton) findViewById(R.id.btn_shutter);
-            captureButton.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // get an image from the camera
-                            mCamera.takePicture(null, null, mPicture);
-                        }
-                    }
-            );
-            preview.addView(mPreview);
-        }else {
-            Toast.makeText(this,"no camera!",Toast.LENGTH_SHORT).show();
-        }
+        fileUri = FileUtil.getOutputMediaFileUri(FileUtil.MEDIA_TYPE_IMAGE); // create a file to save the image
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+
+        // start the image capture Intent
+        startActivityForResult(intent, FileUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
-
-    //检测是否有相机设备
-    private boolean checkCameraHardware(Context context) {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
-            // this device has a camera
-            return true;
-        } else {
-            // no camera on this device
-            return false;
-        }
-    }
-
-    //获得相机设备
-    public static Camera getCameraInstance(){
-        Camera c = null;
-        try {
-            c = Camera.open(); // attempt to get a Camera instance
-        }
-        catch (Exception e){
-            // Camera is not available (in use or does not exist)
-        }
-        return c; // returns null if camera is unavailable
-    }
-
-    private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
-
-        @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-
-            File pictureFile = new File(Environment.getExternalStorageDirectory(),"mypicture");
-            if (pictureFile == null){
-                Log.d(Utils.CAMERA_TAG, "Error creating media file, check storage permissions: ");
-                return;
-            }
-
-            try {
-                FileOutputStream fos = new FileOutputStream(pictureFile);
-                fos.write(data);
-                fos.close();
-            } catch (FileNotFoundException e) {
-                Log.d(Utils.CAMERA_TAG, "File not found: " + e.getMessage());
-            } catch (IOException e) {
-                Log.d(Utils.CAMERA_TAG, "Error accessing file: " + e.getMessage());
-            }
-        }
-    };
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        releaseMediaRecorder();       // if you are using MediaRecorder, release it first
+        releaseCamera();              // release the camera immediately on pause event
+    }
+
+    private void releaseMediaRecorder(){
+        if (mMediaRecorder != null) {
+            mMediaRecorder.reset();   // clear recorder configuration
+            mMediaRecorder.release(); // release the recorder object
+            mMediaRecorder = null;
+            mCamera.lock();           // lock camera for later use
+        }
+    }
+
+    private void releaseCamera(){
+        if (mCamera != null){
+            mCamera.release();        // release the camera for other applications
+            mCamera = null;
+        }
+    }
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Utils.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
+        if (requestCode == FileUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK && data != null) {
                 Toast.makeText(this, "Image saved to:\n" +
                         data.getData(), Toast.LENGTH_LONG).show();
+                Uri selectedImage = data.getData();
+                try {
+                    InputStream is = getContentResolver().openInputStream(selectedImage);
+                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+                    img.setImageBitmap(bitmap);
+                    bitmap.recycle();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
             } else {
