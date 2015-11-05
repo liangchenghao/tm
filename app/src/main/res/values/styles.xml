@@ -31,6 +31,7 @@
         <item name="popupMenuStyle">@style/popupMenuStyle</item>
 
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
     <!--<item name="android:activatedBackgroundIndicator">@drawable/activated_background</item>-->
     <!--<item name="selectableItemBackground">@drawable/selectable_background</item>-->

@@ -1,7 +1,10 @@
 package com.example.chenlian.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.chenlian.flag.Actor;
+import com.example.chenlian.flag.MultiSelector;
 import com.example.chenlian.myapplication.R;
+import com.example.chenlian.utils.OnItemClickListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,10 +26,17 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
 
     private List<Actor> actors;
     private Context context;
+    private OnItemClickListener itemClickListener;
+
+    public MultiSelector selector = new MultiSelector();
 
     public HomeAdapter(Context context, List<Actor> actors) {
         this.context = context;
         this.actors = actors;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
+        this.itemClickListener = onItemClickListener;
     }
 
     @Override
@@ -37,20 +50,49 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
     public void onBindViewHolder(final HomeViewHolder holder, int position) {
         Actor actor = actors.get(position);
         holder.img.setImageResource(actor.getImgID());
-//        //获取图片资源
-//        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.p42);
-//        BitmapDrawable draw = new BitmapDrawable(context.getResources(),bitmap);
-//        //设置imageview高度适应图片高度
-////        int height = holder.img.getWidth() / draw.getMinimumWidth() * draw.getMinimumHeight();
-//        int width = draw.getMinimumWidth();
-//        int height = draw.getMinimumHeight();
-//        holder.img.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height));
-
-//        String imgUrl = "http://www.personal.psu.edu/jul229/mini.jpg";
-//        DisplayImageOptions imageOptions = new DisplayImageOptions.Builder().imageScaleType(ImageScaleType.EXACTLY).build();
-//        ImageLoader imageLoader = ImageLoader.getInstance();
-//        imageLoader.displayImage(imgUrl,holder.img,imageOptions);
         holder.txt.setText(actor.getDescription());
+        final CardView itemView = (CardView) holder.itemView;
+
+        if (!selector.isSelectable()){
+            itemView.setCardBackgroundColor(Color.WHITE);
+        }
+
+        if (itemClickListener != null){
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!selector.isSelectable()){
+                    }else {
+                        int pos = holder.getLayoutPosition();
+                        if (selector.isItemChecked(pos)){
+                            itemView.setCardBackgroundColor(Color.WHITE);
+                            selector.removeItemChecked(pos);
+                        }else {
+                            itemView.setCardBackgroundColor(Color.GRAY);
+                            selector.setItemChecked(pos, true);
+                            Log.v("isClick", pos + "");
+                        }
+                        itemClickListener.onItemClick(itemView,pos);
+                    }
+                }
+            });
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    //判断是否已经进入选择模式
+                    if (!selector.isSelectable()) {
+                        itemView.setCardBackgroundColor(Color.GRAY);
+                        int pos = holder.getLayoutPosition();
+                        selector.setItemChecked(pos, true);
+                        Log.v("isClick",pos+"");
+                        selector.setIsSelected(true);
+                        itemClickListener.onItemLongClick(itemView, pos);
+                    }
+                    return true;
+                }
+            });
+        }
     }
 
     public void addItem(int position) {
@@ -58,9 +100,24 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
         notifyItemInserted(position);
     }
 
-    public void remoteItem(int position) {
-        actors.remove(position);
-        notifyItemRemoved(position);
+    //删除选中的item
+    public void remoteItems() {
+        Integer[] positions = selector.hasSelected();
+        List<Actor> buff = new ArrayList<>();
+        for (int i =0; i < positions.length;i++) {
+            Actor actor = actors.get(positions[i]);
+            buff.add(actor);
+        }
+        actors.removeAll(buff);
+        selector.getSelectedPositions().clear();
+        notifyDataSetChanged();
+    }
+
+    public void restoreBackgroundColor(){
+        Integer[] positions = selector.hasSelected();
+        for(int i = 0;i<positions.length;i++){
+
+        }
     }
 
     @Override

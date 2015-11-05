@@ -1,6 +1,7 @@
 package com.example.chenlian.activity;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,22 +18,35 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.VideoView;
 
+import com.example.chenlian.flag.Actor;
 import com.example.chenlian.myapplication.R;
 import com.example.chenlian.utils.FileUtil;
 import com.example.chenlian.utils.Utils;
 import com.lidroid.xutils.ViewUtils;
+import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
+import com.lidroid.xutils.view.annotation.event.OnClick;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 public class EditActivity extends BaseActivity {
 
+    public static final int MEDIA_CHOICE = 0123;
+    public static final int CHOSE_GALLERY = 0;
+    public static final int CHOSE_IMAGE = 1;
+    public static final int CHOSE_VIDEO = 2;
+
     @ViewInject(R.id.toolbar)
     Toolbar toolbar;
     @ViewInject(R.id.iv_media)
     ImageView ivMedia;
+    @ViewInject(R.id.iv_picture)
+    ImageView ivPicture;
+    @ViewInject(R.id.vv_video)
+    VideoView vvVideo;
     @ViewInject(R.id.fab)
     FloatingActionButton fab;
 
@@ -43,29 +57,6 @@ public class EditActivity extends BaseActivity {
 
         initToolbar();
 
-//        registerForContextMenu(ivMedia);
-        ivMedia.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String[] items = new String[]{"Gallery","Image","video"};
-                AlertDialog.Builder dialog = new AlertDialog.Builder(EditActivity.this)
-                        .setItems(items, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which){
-                                    case 0:
-                                        Intent i = new Intent(
-                                                Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                        startActivityForResult(i, Utils.RESULT_LOAD_IMAGE);
-                                        break;
-                                }
-                            }
-                        });
-                dialog.setNegativeButton("Cancel",null);
-                dialog.create().show();
-            }
-        });
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,28 +66,27 @@ public class EditActivity extends BaseActivity {
         });
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        getMenuInflater().inflate(R.menu.menu_meida_select, menu);
-        super.onCreateContextMenu(menu, v, menuInfo);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_gallery:
-                Intent i = new Intent(
-                        Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(i, Utils.RESULT_LOAD_IMAGE);
-                break;
-            case R.id.menu_capture_image:
-                break;
-            case R.id.menu_capture_video:
-                break;
-            case R.id.menu_cancel:
-                break;
-        }
-        return super.onContextItemSelected(item);
+    @OnClick({R.id.iv_media, R.id.iv_picture, R.id.vv_video})
+    public void showChoseDialog(View v) {
+        String[] items = new String[]{"Gallery", "Image", "video"};
+        AlertDialog.Builder dialog = new AlertDialog.Builder(EditActivity.this)
+                .setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                Intent i = new Intent(EditActivity.this, ResActivity.class);
+                                i.putExtra("chose_code", CHOSE_GALLERY);
+                                startActivityForResult(i, MEDIA_CHOICE);
+//                                Intent i = new Intent(
+//                                        Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                                startActivityForResult(i, Utils.RESULT_LOAD_IMAGE);
+                                break;
+                        }
+                    }
+                });
+        dialog.setNegativeButton("Cancel", null);
+        dialog.show();
     }
 
     @Override
@@ -121,6 +111,17 @@ public class EditActivity extends BaseActivity {
             case R.id.confirm:
 //                setResult();
                 break;
+            case R.id.home:
+                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                dialog.setMessage("确定退出编辑吗")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                EditActivity.this.finish();
+                            }
+                        }).setNegativeButton("取消", null)
+                        .show();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -129,18 +130,25 @@ public class EditActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == Utils.RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
-            Uri selectedImage = data.getData();
-            try {
-                InputStream is = getContentResolver().openInputStream(selectedImage);
-                Bitmap bitmap = BitmapFactory.decodeStream(is);
-                ImageView imageView = (ImageView) findViewById(R.id.iv_picture);
-                imageView.setImageBitmap(bitmap);
-                bitmap.recycle();
-                ivMedia.setVisibility(View.GONE);
-                imageView.setVisibility(View.VISIBLE);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+        if (requestCode == MEDIA_CHOICE) {
+            if (resultCode == ResActivity.RESULT_PICTURE && data != null) {
+                LogUtils.v("onresultgetpic");
+                Bundle mediaDate = data.getExtras();
+                Actor actor = (Actor) mediaDate.getSerializable("actor");
+                String picPath = actor.getMediaPathUri();
+                if (picPath != null) {
+                    try {
+                        LogUtils.v("" + Uri.parse(picPath));
+                        InputStream is = getContentResolver().openInputStream(Uri.parse(picPath));
+                        Bitmap bitmap = BitmapFactory.decodeStream(is);
+                        ImageView imageView = (ImageView) findViewById(R.id.iv_picture);
+                        imageView.setImageBitmap(bitmap);
+                        ivMedia.setVisibility(View.GONE);
+                        imageView.setVisibility(View.VISIBLE);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }

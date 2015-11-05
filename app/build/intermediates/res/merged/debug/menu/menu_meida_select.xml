@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_gallery"
+        android:title="Gallery"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_capture_image"
+        android:title="Image"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_capture_video"
+        android:title="Video"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_cancel"
+        android:title="Cancel"
+        app:showAsAction="always" />
+</menu><!-- From: file:/D:/AS%20workspace/MyApplication/app/src/main/res/menu/menu_meida_select.xml -->

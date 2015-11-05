@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +33,7 @@ import java.util.List;
 
 public class HomeActivity extends BaseActivity {
 
-//    private ImageView ivRunningMan;
+    //    private ImageView ivRunningMan;
     private Toolbar toolbar;
     private DrawerLayout mDrawerLayout;
     private RecyclerView lvLeftMenu;
@@ -41,7 +42,7 @@ public class HomeActivity extends BaseActivity {
 
     private TextView tv_bar;
     List<Actor> showDates = new ArrayList<>();
-    private HomeAdapter homeAdapter = new HomeAdapter(this,showDates);
+    private HomeAdapter homeAdapter = new HomeAdapter(this, showDates);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +100,7 @@ public class HomeActivity extends BaseActivity {
                         startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
                         break;
                     case 3://启动相机
-                        startActivity(new Intent(HomeActivity.this, CameraActivity.class));
+                        startActivity(new Intent(HomeActivity.this, ResActivity.class));
                         break;
                 }
                 mDrawerLayout.closeDrawers();
@@ -115,7 +116,46 @@ public class HomeActivity extends BaseActivity {
     }
 
     protected void initHomeMain() {
-        homeMain.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+        homeMain.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        homeAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+                //进入多选模式
+                toolbar.startActionMode(new ActionMode.Callback() {
+                    @Override
+                    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                        mode.getMenuInflater().inflate(R.menu.menu_edit, menu);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.confirm:
+                                homeAdapter.remoteItems();
+                                mode.finish();
+                                break;
+                        }
+                        return true;
+                    }
+
+                    @Override
+                    public void onDestroyActionMode(ActionMode mode) {
+                        homeAdapter.selector.setIsSelected(false);
+                    }
+                });
+            }
+        });
         homeMain.setAdapter(homeAdapter);
         homeMain.setItemAnimator(new DefaultItemAnimator());
     }
@@ -175,14 +215,14 @@ public class HomeActivity extends BaseActivity {
                 startActivity(new Intent(this, EditActivity.class));
                 break;
             case R.id.action_add:
-                    homeAdapter.addItem(0);
+                homeAdapter.addItem(0);
                 homeMain.scrollToPosition(0);
 //                homeAdapter.notifyDataSetChanged();
 
                 break;
             case R.id.action_del:
-                if (homeAdapter.getItemCount() > 0){
-                    homeAdapter.remoteItem(0);
+                if (homeAdapter.getItemCount() > 0) {
+//                    homeAdapter.remoteItem(0);
 //                    homeMain.scrollToPosition(1);
 //                    homeAdapter.notifyDataSetChanged();
                 }

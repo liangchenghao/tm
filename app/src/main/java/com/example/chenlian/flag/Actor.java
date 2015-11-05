@@ -1,5 +1,6 @@
 package com.example.chenlian.flag;
 
+import android.net.Uri;
 import android.widget.ImageView;
 
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.io.Serializable;
  */
 public class Actor implements Serializable{
     int id;
+    String mediaPathUri;
     String description;
     int imgID;
 
@@ -17,6 +19,22 @@ public class Actor implements Serializable{
     public Actor(String str, int id){
         this.description = str;
         this.imgID = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getMediaPathUri() {
+        return mediaPathUri;
+    }
+
+    public void setMediaPathUri(String mediaPathUri) {
+        this.mediaPathUri = mediaPathUri;
     }
 
     public int getImgID() {
