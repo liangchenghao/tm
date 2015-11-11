@@ -33,7 +33,8 @@
         </activity>
         <activity
             android:name="com.example.chenlian.activity.EditActivity"
-            android:label="@string/title_activity_edit">
+            android:label="@string/title_activity_edit"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.chenlian.activity.HomeActivity" />

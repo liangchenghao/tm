@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class Actor implements Serializable{
     int id;
     String mediaPathUri;
-    String description;
+    CharSequence description;
     int imgID;
 
     public Actor(){};
@@ -45,11 +45,11 @@ public class Actor implements Serializable{
         this.imgID = imgID;
     }
 
-    public String getDescription() {
+    public CharSequence getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(CharSequence description) {
         this.description = description;
     }
 }

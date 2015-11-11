@@ -5,7 +5,7 @@
     android:id="@+id/cv_show"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_margin="2dp"
     app:cardElevation="@dimen/card_elevation">
 
     <!--<android.support.v4.widget.DrawerLayout-->

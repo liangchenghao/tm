@@ -7,81 +7,89 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:weightSum="4"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.chenlian.activity.EditActivity"
-    android:weightSum="4"
     tools:showIn="@layout/activity_edit">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
-        android:background="@color/light_grey_1"
-        android:padding="@dimen/default_padding_top">
+        android:layout_weight="3">
 
-        <ImageView
-            android:id="@+id/iv_picture"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitCenter"
-            android:visibility="gone" />
-
-        <VideoView
-            android:id="@+id/vv_video"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
-
-        <!--<RelativeLayout-->
-            <!--android:id="@+id/rl_picture_or_media"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent">-->
-
-            <!--<View-->
-                <!--android:id="@+id/center_view"-->
-                <!--android:layout_width="20dp"-->
-                <!--android:layout_height="20dp"-->
-                <!--android:layout_centerHorizontal="true"-->
-                <!--android:layout_centerVertical="true" />-->
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp">
 
             <ImageView
-                android:id="@+id/iv_media"
+                android:id="@+id/iv_picture"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
                 android:src="@drawable/g18" />
 
+            <!--<VideoView-->
+            <!--android:id="@+id/vv_video"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:adjustViewBounds="true"-->
+            <!--android:visibility="gone" />-->
+
+
             <!--<ImageView-->
-                <!--android:id="@+id/iv_camera"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_centerVertical="true"-->
-                <!--android:layout_toEndOf="@id/center_view"-->
-                <!--android:layout_toRightOf="@id/center_view"-->
-                <!--android:src="@drawable/g17" />-->
-        <!--</RelativeLayout>-->
+            <!--android:id="@+id/iv_media"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:src="@drawable/g18" />-->
+
+        </ScrollView>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="6dp"
+            android:scaleType="fitCenter"
+            android:src="@android:drawable/ic_input_add" />
     </FrameLayout>
 
-    <include layout="@layout/toolbar_shadow_layout"/>
+    <!--<include layout="@layout/shadow_layout_down" />-->
+    <view
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/shadow_down" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <LinearLayout
+        <!--<com.rengwuxian.materialedittext.MaterialEditText-->
+        <!--android:id="@+id/mdt_write"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="4dp"-->
+        <!--app:met_pirmaryColor="?attr/colorPrimary"-->
+        <!--app:met_floatingLabel="highlight"-->
+        <!--app:met_floatingLabelText="Content"-->
+        <!--app:met_floatingLabelTextColor="?attr/colorPrimary"-->
+        <!--android:hint="在这里输入内容..."-->
+        <!--android:lineSpacingExtra="4dp"-->
+        <!--app:met_hideUnderline="true" />-->
+        <EditText
+            android:id="@+id/et_write"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/default_padding_top"
-            android:orientation="vertical">
-
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/mdt_write"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="在这里输入内容..."
-                android:lineSpacingExtra="4dp"
-                app:met_hideUnderline="true"/>
-        </LinearLayout>
+            android:layout_margin="4dp"
+            android:hint="在这里输入内容..."
+            android:lineSpacingExtra="4dp" />
     </ScrollView>
 </LinearLayout>
-<!-- From: file:/D:/AS%20workspace/MyApplication/app/src/main/res/layout/content_edit.xml -->
+<!-- From: file:/I:/TimeMachine/tm/app/src/main/res/layout/content_edit.xml -->

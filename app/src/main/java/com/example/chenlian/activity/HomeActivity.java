@@ -33,6 +33,8 @@ import java.util.List;
 
 public class HomeActivity extends BaseActivity {
 
+    public static final int GO_EDITOR = 0;
+
     //    private ImageView ivRunningMan;
     private Toolbar toolbar;
     private DrawerLayout mDrawerLayout;
@@ -212,7 +214,8 @@ public class HomeActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit:
-                startActivity(new Intent(this, EditActivity.class));
+                Intent goEditor = new Intent(HomeActivity.this,EditActivity.class);
+                startActivityForResult(goEditor,GO_EDITOR);
                 break;
             case R.id.action_add:
                 homeAdapter.addItem(0);
