@@ -17,7 +17,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -158,6 +160,25 @@ public class EditActivity extends BaseActivity {
     }
 
     @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN){
+            View v = getCurrentFocus();
+            if (Utils.isShouldHideInput(v,ev)){
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null){
+                    imm.hideSoftInputFromWindow(v.getWindowToken(),0);
+                }
+            }
+            return super.dispatchTouchEvent(ev);
+        }
+        //传递touchevent给别的组件
+        if (getWindow().superDispatchTouchEvent(ev)){
+            return true;
+        }
+        return onTouchEvent(ev);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_edit, menu);
         return true;
@@ -178,15 +199,17 @@ public class EditActivity extends BaseActivity {
     }
 
     private void confirmEditor(){
-        if (!actor.getMediaPathUri().isEmpty() || !et_content.getText().toString().isEmpty()){
-
+        if (!et_content.getText().toString().isEmpty()){
             actor.setDescription(et_content.getText().toString());
+        }
 
+        if (!actor.getMediaPath().isEmpty() || !actor.getDescription().isEmpty()){
             Bundle bundle = new Bundle();
             bundle.putSerializable("actor", actor);
             intent.putExtras(bundle);
             setResult(CONFIRM_EDIT, intent);
         }
+        finish();
     }
 
     private void showFinishDialog(Context context){
@@ -252,7 +275,7 @@ public class EditActivity extends BaseActivity {
                     ContentResolver resolver = getContentResolver();
                     //照片的原始资源路径地址
                     Uri selectedImage = data.getData();
-                    actor.setMediaPathUri(selectedImage.toString());
+                    actor.setMediaPath(selectedImage.getPath());
                     try {
                         Bitmap photo = MediaStore.Images.Media.getBitmap(resolver,selectedImage);
                         if (photo != null){
@@ -268,7 +291,7 @@ public class EditActivity extends BaseActivity {
                 case FileUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
 
                     Uri captureImage = imageFileUri;
-                    actor.setMediaPathUri(captureImage.toString());
+                    actor.setMediaPath(captureImage.getPath());
                     Bitmap bitmap = BitmapFactory.decodeFile(captureImage.getPath());
                     Bitmap newBitmap = ImageUtil.zoomBitmap(bitmap);
                     bitmap.recycle();

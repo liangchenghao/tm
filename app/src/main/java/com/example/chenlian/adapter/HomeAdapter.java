@@ -1,6 +1,8 @@
 package com.example.chenlian.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 import com.example.chenlian.flag.Actor;
 import com.example.chenlian.flag.MultiSelector;
 import com.example.chenlian.myapplication.R;
+import com.example.chenlian.utils.ImageUtil;
 import com.example.chenlian.utils.OnItemClickListener;
 
 import java.util.ArrayList;
@@ -49,30 +52,44 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
     @Override
     public void onBindViewHolder(final HomeViewHolder holder, int position) {
         Actor actor = actors.get(position);
-        holder.img.setImageResource(actor.getImgID());
-        holder.txt.setText(actor.getDescription());
+
+        if (!actor.getMediaPath().isEmpty()){
+            Bitmap bitmap = BitmapFactory.decodeFile(actor.getMediaPath());
+            Bitmap newBitmap = ImageUtil.zoomBitmap(bitmap);
+            bitmap.recycle();
+
+            holder.img.setVisibility(View.VISIBLE);
+            holder.img.setImageBitmap(newBitmap);
+        }
+//        holder.img.setImageResource(actor.getImgID());
+
+        if (!actor.getDescription().isEmpty()){
+            holder.txt.setVisibility(View.VISIBLE);
+            holder.txt.setText(actor.getDescription());
+        }
+
         final CardView itemView = (CardView) holder.itemView;
 
         if (!selector.isSelectable()){
             itemView.setCardBackgroundColor(Color.WHITE);
         }
 
-        if (itemClickListener != null){
+        if (itemClickListener != null) {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!selector.isSelectable()){
-                    }else {
+                    if (!selector.isSelectable()) {
+                    } else {
                         int pos = holder.getLayoutPosition();
-                        if (selector.isItemChecked(pos)){
+                        if (selector.isItemChecked(pos)) {
                             itemView.setCardBackgroundColor(Color.WHITE);
                             selector.removeItemChecked(pos);
-                        }else {
+                        } else {
                             itemView.setCardBackgroundColor(Color.GRAY);
                             selector.setItemChecked(pos, true);
                             Log.v("isClick", pos + "");
                         }
-                        itemClickListener.onItemClick(itemView,pos);
+                        itemClickListener.onItemClick(itemView, pos);
                     }
                 }
             });
@@ -85,7 +102,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
                         itemView.setCardBackgroundColor(Color.GRAY);
                         int pos = holder.getLayoutPosition();
                         selector.setItemChecked(pos, true);
-                        Log.v("isClick",pos+"");
+                        Log.v("isClick", pos + "");
                         selector.setIsSelected(true);
                         itemClickListener.onItemLongClick(itemView, pos);
                     }
@@ -95,9 +112,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
         }
     }
 
-    public void addItem(int position) {
-        actors.add(position, new Actor("hainfakgna;lka", R.drawable.g18));
-        notifyItemInserted(position);
+    public void addItem(Actor actor) {
+        actors.add(0, actor);
+        notifyItemInserted(0);
     }
 
     //删除选中的item

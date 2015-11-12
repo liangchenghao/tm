@@ -160,7 +160,7 @@ public class ResActivity extends Activity {
 
                     //照片的原始资源路径地址
                     Uri selectedImage = data.getData();
-                    actor.setMediaPathUri(selectedImage.toString());
+                    actor.setMediaPath(selectedImage.getPath());
                     try {
                         Bitmap photo = MediaStore.Images.Media.getBitmap(resolver,selectedImage);
                         if (photo != null){
@@ -177,7 +177,7 @@ public class ResActivity extends Activity {
                 case FileUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
 
                     Uri captureImage = imageFileUri;
-                    actor.setMediaPathUri(captureImage.toString());
+                    actor.setMediaPath(captureImage.getPath());
                     Bitmap bitmap = BitmapFactory.decodeFile(captureImage.getPath());
                     Bitmap newBitmap = ImageUtil.zoomBitmap(bitmap);
                     bitmap.recycle();

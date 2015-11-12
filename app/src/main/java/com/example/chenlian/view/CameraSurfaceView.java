@@ -7,7 +7,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.example.chenlian.camera.CameraInterface;
+import com.example.chenlian.manager.CameraInterface;
 
 /**
  * Created by chenlian on 10/16/2015.
