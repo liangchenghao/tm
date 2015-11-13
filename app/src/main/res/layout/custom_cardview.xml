@@ -5,7 +5,7 @@
     android:id="@+id/cv_show"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_margin="2dp"
     app:cardElevation="@dimen/card_elevation">
 
     <!--<android.support.v4.widget.DrawerLayout-->
@@ -18,18 +18,30 @@
             android:orientation="vertical"
             android:padding="5dp">
 
-            <ImageView
-                android:id="@+id/cv_img"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop" />
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/cv_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"/>
+                <ImageButton
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/ib_recorder_player"
+                    android:layout_gravity="bottom|right"/>
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/cv_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp" />
+                android:layout_marginTop="5dp"
+                android:visibility="gone"/>
         </LinearLayout>
 
         <!--<RelativeLayout-->

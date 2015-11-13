@@ -7,6 +7,7 @@ import android.util.Log;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -73,33 +74,68 @@ public class FileUtil {
     public static File getOutputMediaFile(int type){
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
 
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "TimeMachine");
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
+            File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "TimeMachine");
+//Environment.getExternalStoragePublicDirectory(
+//            Environment.DIRECTORY_PICTURES)
+//        Log.v("TimeMachine", "success to create directory:" + mediaStorageDir.toString());
+            // This location works best if you want the created images to be shared
+            // between applications and persist after your app has been uninstalled.
 
-        // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
-                Log.d("TimeMachine", "failed to create directory");
+            // Create the storage directory if it does not exist
+            if (! mediaStorageDir.exists()){
+                mediaStorageDir.mkdirs();
+//                if (! mediaStorageDir.mkdirs()){
+//                    Log.v("TimeMachine", "failed to create directory");
+//                    return null;
+//                }
+            }
+
+            // Create a media file name
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            File mediaFile;
+            if (type == MEDIA_TYPE_IMAGE){
+                mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                        "IMG_"+ timeStamp + ".jpg");
+                Log.i("getOutputMediaFile",""+ mediaFile);
+            } else if(type == MEDIA_TYPE_VIDEO) {
+                mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                        "VID_"+ timeStamp + ".mp4");
+                Log.i("getOutputMediaFile",""+ mediaFile);
+            } else {
                 return null;
             }
-        }
-
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE){
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_"+ timeStamp + ".jpg");
-        } else if(type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_"+ timeStamp + ".mp4");
-        } else {
+            if (!mediaFile.exists()){
+                try {
+                    mediaFile.createNewFile();
+                    Log.i("getOutputMediaFile","mediaFile create!!!");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return mediaFile;
+        }else {
+            Log.v("TimeMachine", "SD card is unable!");
             return null;
         }
+    }
 
-        return mediaFile;
+    public static void savePhotoToSDCard(String photoPath,Bitmap photoBitmap){
+        File photoFile = new File(photoPath);
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(photoFile);
+            if (photoBitmap != null){
+                if (photoBitmap.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream)){
+                    fileOutputStream.flush();
+                    Log.i("savePhotoToSDCard", "to SD success");
+                }
+            }
+            fileOutputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

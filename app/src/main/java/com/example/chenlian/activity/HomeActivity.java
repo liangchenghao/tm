@@ -25,6 +25,8 @@ import com.example.chenlian.flag.Actor;
 import com.example.chenlian.myapplication.R;
 import com.example.chenlian.utils.OnItemClickListener;
 import com.example.chenlian.utils.Utils;
+import com.lidroid.xutils.DbUtils;
+import com.lidroid.xutils.exception.DbException;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -32,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends BaseActivity {
+
+    public static final int GO_EDITOR = 0;
 
     //    private ImageView ivRunningMan;
     private Toolbar toolbar;
@@ -43,11 +47,14 @@ public class HomeActivity extends BaseActivity {
     private TextView tv_bar;
     List<Actor> showDates = new ArrayList<>();
     private HomeAdapter homeAdapter = new HomeAdapter(this, showDates);
+    private DbUtils db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_home);
+
+        loadingDB(db);
 
         findViews();
         initToolbar();
@@ -143,6 +150,7 @@ public class HomeActivity extends BaseActivity {
                         switch (item.getItemId()) {
                             case R.id.confirm:
                                 homeAdapter.remoteItems();
+                                homeMain.scrollToPosition(0);
                                 mode.finish();
                                 break;
                         }
@@ -179,24 +187,18 @@ public class HomeActivity extends BaseActivity {
         homeMain = (RecyclerView) findViewById(R.id.rv_main);
 //        tv_bar = (TextView) toolbar.findViewById(R.id.tv_toolbar);
 
-        showDates.add(new Actor("sdafjdasfaskdf", R.drawable.p42));
+//        showDates.add(new Actor("sdafjdasfaskdf", R.drawable.p42));
     }
 
-    //回调加载图片
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private void loadingDB(DbUtils db){
+        if (db == null){
+            db = DbUtils.create(this);
+        }
 
-        if (requestCode == Utils.RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
-            Uri selectedImage = data.getData();
-            try {
-                InputStream is = getContentResolver().openInputStream(selectedImage);
-                Bitmap bitmap = BitmapFactory.decodeStream(is);
-//                ImageView imageView = (ImageView) findViewById(R.id.iv_main);
-//                imageView.setImageBitmap(bitmap);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+        try {
+            showDates.addAll(db.findAll(Actor.class));
+        } catch (DbException e) {
+            e.printStackTrace();
         }
     }
 
@@ -212,11 +214,12 @@ public class HomeActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit:
-                startActivity(new Intent(this, EditActivity.class));
+                Intent goEditor = new Intent(HomeActivity.this,EditActivity.class);
+                startActivityForResult(goEditor,GO_EDITOR);
                 break;
             case R.id.action_add:
-                homeAdapter.addItem(0);
-                homeMain.scrollToPosition(0);
+//                homeAdapter.addItem(0);
+//                homeMain.scrollToPosition(0);
 //                homeAdapter.notifyDataSetChanged();
 
                 break;
@@ -230,4 +233,37 @@ public class HomeActivity extends BaseActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+    //回调加载图片
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == GO_EDITOR && resultCode == EditActivity.CONFIRM_EDIT && data != null){
+            Bundle mediaDate = data.getExtras();
+            Actor actor = (Actor) mediaDate.getSerializable("actor");
+            try {
+                db.save(actor);
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
+            showDates.add(actor);
+            homeAdapter.addItem(actor);
+            homeMain.scrollToPosition(0);
+        }
+
+        if (requestCode == Utils.RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
+            Uri selectedImage = data.getData();
+            try {
+                InputStream is = getContentResolver().openInputStream(selectedImage);
+                Bitmap bitmap = BitmapFactory.decodeStream(is);
+//                ImageView imageView = (ImageView) findViewById(R.id.iv_main);
+//                imageView.setImageBitmap(bitmap);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

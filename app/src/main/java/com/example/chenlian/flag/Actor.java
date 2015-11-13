@@ -10,7 +10,8 @@ import java.io.Serializable;
  */
 public class Actor implements Serializable{
     int id;
-    String mediaPathUri;
+    String mediaPath;
+    String recoderPath;
     String description;
     int imgID;
 
@@ -29,12 +30,12 @@ public class Actor implements Serializable{
         this.id = id;
     }
 
-    public String getMediaPathUri() {
-        return mediaPathUri;
+    public String getMediaPath() {
+        return mediaPath;
     }
 
-    public void setMediaPathUri(String mediaPathUri) {
-        this.mediaPathUri = mediaPathUri;
+    public void setMediaPath(String mediaPath) {
+        this.mediaPath = mediaPath;
     }
 
     public int getImgID() {
@@ -52,4 +53,13 @@ public class Actor implements Serializable{
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public String getRecoderPath() {
+        return recoderPath;
+    }
+
+    public void setRecoderPath(String recoderPath) {
+        this.recoderPath = recoderPath;
+    }
+
 }

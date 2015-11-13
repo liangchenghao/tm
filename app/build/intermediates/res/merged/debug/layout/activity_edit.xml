@@ -24,19 +24,13 @@
         android:theme="@style/WhiteActionBack">
 
         <include layout="@layout/custom_toolbar" />
+        <include layout="@layout/shadow_layout_up"/>
 
         <include layout="@layout/content_edit" />
     </LinearLayout>
     <!--<include layout="@layout/content_edit"/>-->
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:scaleType="fitCenter"
-        android:src="@android:drawable/ic_input_add" />
+
 
     <!--<com.getbase.floatingactionbutton.FloatingActionsMenu-->
     <!--android:id="@+id/fam"-->
@@ -86,4 +80,4 @@
     <!--</com.getbase.floatingactionbutton.FloatingActionsMenu>-->
 
 </android.support.design.widget.CoordinatorLayout>
-<!-- From: file:/D:/AS%20workspace/MyApplication/app/src/main/res/layout/activity_edit.xml -->
+<!-- From: file:/I:/TimeMachine/tm/app/src/main/res/layout/activity_edit.xml -->

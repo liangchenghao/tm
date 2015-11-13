@@ -1,9 +1,11 @@
 package com.example.chenlian.activity;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -19,13 +21,16 @@ import android.widget.Toast;
 import com.example.chenlian.flag.Actor;
 import com.example.chenlian.myapplication.R;
 import com.example.chenlian.utils.FileUtil;
+import com.example.chenlian.utils.ImageUtil;
 import com.example.chenlian.utils.Utils;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -41,9 +46,9 @@ public class ResActivity extends Activity {
     private Camera mCamera;
     private SurfaceView mPreview;
     private MediaRecorder mMediaRecorder;
-    private Uri fileUri;
+    private Uri imageFileUri;
     public Actor actor = new Actor();
-    Intent result;
+    Intent intent;
 
 
     @Override
@@ -53,8 +58,8 @@ public class ResActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ViewUtils.inject(this);
 
-        result = getIntent();
-        selectResFrom(result.getIntExtra("chose_code", 9));
+        intent = getIntent();
+        selectResFrom(intent.getIntExtra("chose_code", 9));
     }
 
     private void selectResFrom(int flag) {
@@ -78,20 +83,20 @@ public class ResActivity extends Activity {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        fileUri = FileUtil.getOutputMediaFileUri(FileUtil.MEDIA_TYPE_IMAGE); // create a file to save the image
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+        imageFileUri = FileUtil.getOutputMediaFileUri(FileUtil.MEDIA_TYPE_IMAGE); // create a file to save the image
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri); // set the image file name
 
         // start the image capture Intent
         startActivityForResult(intent, FileUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
-    @OnClick({R.id.btn_ok,R.id.btn_cancel})
+    @OnClick({R.id.btn_ok, R.id.btn_cancel})
     public void putMedio(View v) {
         if (v.getId() == R.id.btn_ok && img.getDrawable() != null && img.getVisibility() == View.VISIBLE) {
             Bundle bundle = new Bundle();
             bundle.putSerializable("actor", actor);
-            result.putExtras(bundle);
-            setResult(RESULT_PICTURE, result);
+            intent.putExtras(bundle);
+            setResult(RESULT_PICTURE, intent);
         }
         finish();
     }
@@ -122,26 +127,69 @@ public class ResActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == Utils.RESULT_LOAD_IMAGE || requestCode == FileUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK && data != null) {
-                Toast.makeText(this, "Image saved to:\n" +
+//        if (requestCode == Utils.RESULT_LOAD_IMAGE || requestCode == FileUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+//            if (resultCode == RESULT_OK && data != null) {
+//                Toast.makeText(this, "Image saved to:\n" +
+//                        data.getData(), Toast.LENGTH_SHORT).show();
+//                Uri selectedImage = data.getData();
+//                actor.setMediaPathUri(selectedImage.toString());
+////                    InputStream is = getContentResolver().openInputStream(selectedImage);
+////                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+//
+//                Bitmap bitmap = BitmapFactory.decodeFile(selectedImage.getPath());
+//                if ()
+//                bitmap.recycle();
+//                img.setVisibility(View.VISIBLE);
+//                img.setImageBitmap(bitmap);
+//                if (requestCode == FileUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE){
+//
+//                }
+//            } else if (resultCode == RESULT_CANCELED) {
+//                // User cancelled the image capture
+//            } else {
+//                // Image capture failed, advise user
+//            }
+//        }
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case Utils.RESULT_LOAD_IMAGE:
+                    ContentResolver resolver = getContentResolver();
+
+                    Toast.makeText(this, "Image saved to:\n" +
                         data.getData(), Toast.LENGTH_SHORT).show();
-                Uri selectedImage = data.getData();
-                actor.setMediaPathUri(selectedImage.toString());
-                try {
-                    InputStream is = getContentResolver().openInputStream(selectedImage);
-                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+
+                    //照片的原始资源路径地址
+                    Uri selectedImage = data.getData();
+                    actor.setMediaPath(selectedImage.getPath());
+                    try {
+                        Bitmap photo = MediaStore.Images.Media.getBitmap(resolver,selectedImage);
+                        if (photo != null){
+                            Bitmap smallBitmap = ImageUtil.zoomBitmap(photo);
+                            photo.recycle();
+
+                            img.setVisibility(View.VISIBLE);
+                            img.setImageBitmap(smallBitmap);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case FileUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
+
+                    Uri captureImage = imageFileUri;
+                    actor.setMediaPath(captureImage.getPath());
+                    Bitmap bitmap = BitmapFactory.decodeFile(captureImage.getPath());
+                    Bitmap newBitmap = ImageUtil.zoomBitmap(bitmap);
+                    bitmap.recycle();
+
                     img.setVisibility(View.VISIBLE);
-                    img.setImageBitmap(bitmap);
-//                    bitmap.recycle();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            } else if (resultCode == RESULT_CANCELED) {
-                // User cancelled the image capture
-            } else {
-                // Image capture failed, advise user
+                    img.setImageBitmap(newBitmap);
+                    FileUtil.savePhotoToSDCard(captureImage.getPath(),newBitmap);
+                    break;
             }
+        }else {
+            Toast.makeText(this, "get result failed", Toast.LENGTH_SHORT).show();
         }
+
     }
 }
