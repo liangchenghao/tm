@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,7 +19,11 @@ import com.example.chenlian.flag.MultiSelector;
 import com.example.chenlian.myapplication.R;
 import com.example.chenlian.utils.ImageUtil;
 import com.example.chenlian.utils.OnItemClickListener;
+import com.lidroid.xutils.util.LogUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +43,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
         this.actors = actors;
     }
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.itemClickListener = onItemClickListener;
     }
 
@@ -52,25 +57,34 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
     @Override
     public void onBindViewHolder(final HomeViewHolder holder, int position) {
         Actor actor = actors.get(position);
+        LogUtils.v(">>>>>>>>>" + actor.toString());
 
-        if (!actor.getMediaPath().isEmpty()){
-            Bitmap bitmap = BitmapFactory.decodeFile(actor.getMediaPath());
-            Bitmap newBitmap = ImageUtil.zoomBitmap(bitmap);
-            bitmap.recycle();
+        if (actor.getMediaPath() != null) {
+            try {
+                InputStream is = context.getContentResolver().openInputStream(Uri.parse(actor.getMediaPath()));
+                Bitmap bitmap = BitmapFactory.decodeStream(is);
 
-            holder.img.setVisibility(View.VISIBLE);
-            holder.img.setImageBitmap(newBitmap);
+                LogUtils.v(">>>>>>>>>" + bitmap.toString());
+
+                Bitmap newBitmap = ImageUtil.zoomBitmap(bitmap);
+                bitmap.recycle();
+
+                holder.img.setVisibility(View.VISIBLE);
+                holder.img.setImageBitmap(newBitmap);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 //        holder.img.setImageResource(actor.getImgID());
 
-        if (!actor.getDescription().isEmpty()){
+        if (actor.getDescription() != null) {
             holder.txt.setVisibility(View.VISIBLE);
             holder.txt.setText(actor.getDescription());
         }
 
         final CardView itemView = (CardView) holder.itemView;
 
-        if (!selector.isSelectable()){
+        if (!selector.isSelectable()) {
             itemView.setCardBackgroundColor(Color.WHITE);
         }
 
@@ -121,7 +135,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
     public void remoteItems() {
         Integer[] positions = selector.hasSelected();
         List<Actor> buff = new ArrayList<>();
-        for (int i =0; i < positions.length;i++) {
+        for (int i = 0; i < positions.length; i++) {
             Actor actor = actors.get(positions[i]);
             buff.add(actor);
         }
@@ -130,9 +144,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
         notifyDataSetChanged();
     }
 
-    public void restoreBackgroundColor(){
+    public void restoreBackgroundColor() {
         Integer[] positions = selector.hasSelected();
-        for(int i = 0;i<positions.length;i++){
+        for (int i = 0; i < positions.length; i++) {
 
         }
     }

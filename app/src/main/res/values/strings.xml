@@ -65,4 +65,5 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_edit">EditActivity</string>
     <string name="title_activity_adfasdnldsg">AdfasdnldsgActivity</string>
+    <string name="writeHere">在这里输入内容...</string>
 </resources>

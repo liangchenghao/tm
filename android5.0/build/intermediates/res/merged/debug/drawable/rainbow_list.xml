@@ -13,4 +13,4 @@
             <item android:duration="50" android:drawable="@drawable/rainbow7"/>
         </animation-list>
     </transition>
-</animated-selector><!-- From: file:/I:/TimeMachine/tm/android5.0/src/main/res/drawable/rainbow_list.xml -->
+</animated-selector><!-- From: file:/D:/AS%20workspace/MyApplication/android5.0/src/main/res/drawable/rainbow_list.xml -->

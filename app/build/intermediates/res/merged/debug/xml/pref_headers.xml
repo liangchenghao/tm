@@ -16,4 +16,4 @@
         android:title="@string/pref_header_data_sync" android:icon="@drawable/ic_sync_black_24dp" />
 
 </preference-headers>
-<!-- From: file:/I:/TimeMachine/tm/app/src/main/res/xml/pref_headers.xml -->
+<!-- From: file:/D:/AS%20workspace/MyApplication/app/src/main/res/xml/pref_headers.xml -->

@@ -22,7 +22,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/action_edit"
-        android:icon="@drawable/g17"
+        android:icon="@drawable/ic_done_white_24dp"
         android:orderInCategory="90"
         android:title="action_edit"
         app:showAsAction="always" />

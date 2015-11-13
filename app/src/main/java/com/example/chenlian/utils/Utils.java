@@ -23,7 +23,7 @@ public class Utils {
             int bottom = top + v.getHeight();
             int right = left + v.getWidth();
             if (event.getX() > left && event.getX() < right
-                    && event.getY() > top && event.getY() < bottom){
+                    && event.getY() > top){
                 //点击的是输入框区域，保留edittext的点击事件
                 return false;
             }else {

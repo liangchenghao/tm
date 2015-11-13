@@ -1,22 +1,20 @@
 package com.example.chenlian.activity;
 
-<<<<<<< HEAD
-=======
+
 import android.content.ContentResolver;
 import android.content.Context;
-import android.hardware.Camera;
-import android.media.MediaRecorder;
-import android.provider.MediaStore;
->>>>>>> efea85e08e9d5a3efea16b2de030e1dceb16cdc7
-import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Camera;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,29 +23,21 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-<<<<<<< HEAD
-=======
 import android.widget.Toast;
->>>>>>> efea85e08e9d5a3efea16b2de030e1dceb16cdc7
-import android.widget.VideoView;
 
 import com.example.chenlian.flag.Actor;
 import com.example.chenlian.myapplication.R;
-<<<<<<< HEAD
-=======
 import com.example.chenlian.utils.FileUtil;
 import com.example.chenlian.utils.ImageUtil;
 import com.example.chenlian.utils.Utils;
->>>>>>> efea85e08e9d5a3efea16b2de030e1dceb16cdc7
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class EditActivity extends BaseActivity {
 
@@ -62,11 +52,11 @@ public class EditActivity extends BaseActivity {
 //    @ViewInject(R.id.iv_media)
 //    ImageView ivMedia;
     @ViewInject(R.id.iv_picture)
-    ImageView ivPicture;
+ImageView ivPicture;
 //    @ViewInject(R.id.vv_video)
 //    VideoView vvVideo;
     @ViewInject(R.id.fab)
-    FloatingActionButton fab;
+FloatingActionButton fab;
     @ViewInject(R.id.et_write)
     EditText et_content;
 
@@ -147,18 +137,8 @@ public class EditActivity extends BaseActivity {
 
     @Override
     protected void onPause() {
-        super.onPause();
-        releaseMediaRecorder();       // if you are using MediaRecorder, release it first
+        super.onPause();   // if you are using MediaRecorder, release it first
         releaseCamera();              // release the camera immediately on pause event
-    }
-
-    private void releaseMediaRecorder() {
-        if (mMediaRecorder != null) {
-            mMediaRecorder.reset();   // clear recorder configuration
-            mMediaRecorder.release(); // release the recorder object
-            mMediaRecorder = null;
-            mCamera.lock();           // lock camera for later use
-        }
     }
 
     private void releaseCamera() {
@@ -200,7 +180,7 @@ public class EditActivity extends BaseActivity {
                 confirmEditor();
                 return true;
             case android.R.id.home:
-                showFinishDialog(this);
+                showFinishDialog(this,"确定退出编辑吗？");
                 return true;
             default:
                 return false;
@@ -212,18 +192,27 @@ public class EditActivity extends BaseActivity {
             actor.setDescription(et_content.getText().toString());
         }
 
-        if (!actor.getMediaPath().isEmpty() || !actor.getDescription().isEmpty()){
+        LogUtils.v("editactivity>>>>>>>>>>>"+ actor.toString());
+
+        if (actor.getMediaPath() != null || actor.getDescription() != null){
+
+            String timeStamp = new SimpleDateFormat("yyyyMMdd HH:mm").format(new Date());
+            actor.setTime(timeStamp);
+
             Bundle bundle = new Bundle();
             bundle.putSerializable("actor", actor);
             intent.putExtras(bundle);
             setResult(CONFIRM_EDIT, intent);
+            LogUtils.v(">>>>>>>>>>edit actor is no null");
+            finish();
+        }else {
+            showFinishDialog(this,"你没有编辑内容，确定退出吗？");
         }
-        finish();
     }
 
-    private void showFinishDialog(Context context){
+    private void showFinishDialog(Context context, String des){
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-        dialog.setMessage("确定退出编辑吗")
+        dialog.setMessage(des)
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -284,7 +273,10 @@ public class EditActivity extends BaseActivity {
                     ContentResolver resolver = getContentResolver();
                     //照片的原始资源路径地址
                     Uri selectedImage = data.getData();
-                    actor.setMediaPath(selectedImage.getPath());
+                    actor.setMediaPath(selectedImage.toString());
+
+                    LogUtils.v(">>>>>>>>>>edit actor.mediapath is no null" + selectedImage.toString());
+
                     try {
                         Bitmap photo = MediaStore.Images.Media.getBitmap(resolver,selectedImage);
                         if (photo != null){
@@ -300,7 +292,10 @@ public class EditActivity extends BaseActivity {
                 case FileUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
 
                     Uri captureImage = imageFileUri;
-                    actor.setMediaPath(captureImage.getPath());
+                    actor.setMediaPath(captureImage.toString());
+
+                    LogUtils.v(">>>>>>>>>>edit actor.mediapath is no null" + captureImage.toString());
+
                     Bitmap bitmap = BitmapFactory.decodeFile(captureImage.getPath());
                     Bitmap newBitmap = ImageUtil.zoomBitmap(bitmap);
                     bitmap.recycle();
