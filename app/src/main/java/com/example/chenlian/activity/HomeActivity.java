@@ -26,7 +26,9 @@ import com.example.chenlian.myapplication.R;
 import com.example.chenlian.utils.OnItemClickListener;
 import com.example.chenlian.utils.Utils;
 import com.lidroid.xutils.DbUtils;
+import com.lidroid.xutils.db.sqlite.Selector;
 import com.lidroid.xutils.exception.DbException;
+import com.lidroid.xutils.util.LogUtils;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -54,7 +56,21 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_home);
 
-        loadingDB(db);
+        if (db == null){
+            db = DbUtils.create(this);
+            try {
+                db.createTableIfNotExist(Actor.class);
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            showDates.addAll(db.<Actor>findAll(Selector.from(Actor.class).orderBy("time",true)));
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+//        loadingDB(db);
 
         findViews();
         initToolbar();
@@ -193,10 +209,15 @@ public class HomeActivity extends BaseActivity {
     private void loadingDB(DbUtils db){
         if (db == null){
             db = DbUtils.create(this);
+            try {
+                db.createTableIfNotExist(Actor.class);
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
         }
 
         try {
-            showDates.addAll(db.findAll(Actor.class));
+            showDates.addAll(db.<Actor>findAll(Selector.from(Actor.class).orderBy("time")));
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -243,14 +264,18 @@ public class HomeActivity extends BaseActivity {
         if (requestCode == GO_EDITOR && resultCode == EditActivity.CONFIRM_EDIT && data != null){
             Bundle mediaDate = data.getExtras();
             Actor actor = (Actor) mediaDate.getSerializable("actor");
-            try {
-                db.save(actor);
-            } catch (DbException e) {
-                e.printStackTrace();
+
+            LogUtils.v(">>>>>>>>>>>" + actor.toString() + db.toString());
+            if (actor != null){
+                try {
+                    db.save(actor);
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
+//                showDates.add(actor);
+                homeAdapter.addItem(actor);
+                homeMain.scrollToPosition(0);
             }
-            showDates.add(actor);
-            homeAdapter.addItem(actor);
-            homeMain.scrollToPosition(0);
         }
 
         if (requestCode == Utils.RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {

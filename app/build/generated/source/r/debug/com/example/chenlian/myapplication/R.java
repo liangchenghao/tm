@@ -2711,15 +2711,16 @@ containing a value of this type.
         public static final int g18=0x7f020044;
         public static final int g20=0x7f020045;
         public static final int g8=0x7f020046;
-        public static final int ic_info_black_24dp=0x7f020047;
-        public static final int ic_notifications_black_24dp=0x7f020048;
-        public static final int ic_sync_black_24dp=0x7f020049;
-        public static final int item_select=0x7f02004a;
-        public static final int met_ic_clear=0x7f02004b;
-        public static final int notification_template_icon_bg=0x7f02004f;
-        public static final int p42=0x7f02004c;
-        public static final int shadow_down=0x7f02004d;
-        public static final int shadow_up=0x7f02004e;
+        public static final int ic_done_white_24dp=0x7f020047;
+        public static final int ic_info_black_24dp=0x7f020048;
+        public static final int ic_notifications_black_24dp=0x7f020049;
+        public static final int ic_sync_black_24dp=0x7f02004a;
+        public static final int item_select=0x7f02004b;
+        public static final int met_ic_clear=0x7f02004c;
+        public static final int notification_template_icon_bg=0x7f020050;
+        public static final int p42=0x7f02004d;
+        public static final int shadow_down=0x7f02004e;
+        public static final int shadow_up=0x7f02004f;
     }
     public static final class id {
         public static final int action0=0x7f0e0080;
@@ -2989,6 +2990,7 @@ containing a value of this type.
         public static final int title_activity_edit=0x7f070026;
         public static final int title_activity_home=0x7f070027;
         public static final int title_activity_settings=0x7f070028;
+        public static final int writeHere=0x7f070029;
     }
     public static final class style {
         public static final int AlertDialog_AppCompat=0x7f09007b;

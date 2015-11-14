@@ -15,22 +15,30 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3">
+        android:layout_weight="3"
+        android:background="@color/light_grey_1">
 
         <ScrollView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingLeft="6dp"
             android:paddingRight="6dp">
 
-            <ImageView
-                android:id="@+id/iv_picture"
-                android:layout_width="wrap_content"
+            <FrameLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/g18" />
+                android:background="@null">
+
+                <ImageView
+                    android:id="@+id/iv_picture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:layout_gravity="center"
+                    android:src="@drawable/g18" />
+            </FrameLayout>
 
             <!--<VideoView-->
             <!--android:id="@+id/vv_video"-->
@@ -58,13 +66,14 @@
             android:layout_margin="6dp"
             android:scaleType="fitCenter"
             android:src="@android:drawable/ic_input_add" />
+
     </FrameLayout>
 
-    <!--<include layout="@layout/shadow_layout_down" />-->
-    <view
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/shadow_down" />
+    <include layout="@layout/shadow_layout_down"/>
+    <!--<view-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="2dp"-->
+        <!--android:background="@drawable/shadow_down" />-->
 
     <ScrollView
         android:layout_width="match_parent"
@@ -88,7 +97,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:hint="在这里输入内容..."
+            android:background="@null"
+            android:textColor="@android:color/black"
+            android:hint="@string/writeHere"
+            android:textSize="16dip"
             android:lineSpacingExtra="4dp" />
     </ScrollView>
 </LinearLayout>

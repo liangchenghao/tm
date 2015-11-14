@@ -13,13 +13,12 @@ public class Actor implements Serializable{
     String mediaPath;
     String recoderPath;
     String description;
-    int imgID;
+    String time;
 
-    public Actor(){};
+    public Actor(){}
 
-    public Actor(String str, int id){
+    public Actor(String str){
         this.description = str;
-        this.imgID = id;
     }
 
     public int getId() {
@@ -38,14 +37,6 @@ public class Actor implements Serializable{
         this.mediaPath = mediaPath;
     }
 
-    public int getImgID() {
-        return imgID;
-    }
-
-    public void setImgID(int imgID) {
-        this.imgID = imgID;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -62,4 +53,22 @@ public class Actor implements Serializable{
         this.recoderPath = recoderPath;
     }
 
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    @Override
+    public String toString() {
+        return "Actor{" +
+                "id=" + id +
+                ", mediaPath='" + mediaPath + '\'' +
+                ", recoderPath='" + recoderPath + '\'' +
+                ", description='" + description + '\'' +
+                ", imgID=" +
+                '}';
+    }
 }

@@ -21,4 +21,4 @@
             <item android:duration="20" android:drawable="@drawable/btn_check_15"/>
         </animation-list>
     </transition>
-</animated-selector><!-- From: file:/I:/TimeMachine/tm/android5.0/src/main/res/drawable/state_list.xml -->
+</animated-selector><!-- From: file:/D:/AS%20workspace/MyApplication/android5.0/src/main/res/drawable/state_list.xml -->

@@ -5,4 +5,4 @@
           android:choiceMode="singleChoice"
           android:background="?android:attr/colorBackground"
           tools:context=".NavigationDrawerFragment"/>
-<!-- From: file:/I:/TimeMachine/tm/android5.0/src/main/res/layout/fragment_drawer.xml -->
+<!-- From: file:/D:/AS%20workspace/MyApplication/android5.0/src/main/res/layout/fragment_drawer.xml -->
