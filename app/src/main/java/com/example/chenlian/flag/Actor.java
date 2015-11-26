@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Created by chenlian on 10/23/2015.
  */
 public class Actor implements Serializable{
-    int id;
+    Integer id;
     String mediaPath;
     String recoderPath;
     String description;
@@ -21,7 +21,7 @@ public class Actor implements Serializable{
         this.description = str;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

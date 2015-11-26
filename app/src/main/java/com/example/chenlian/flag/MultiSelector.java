@@ -12,13 +12,13 @@ public class MultiSelector {
     public SparseBooleanArray getSelectedPositions() {
         return selectedPositions;
     }
+//
+//    public void setSelectedPositions(SparseBooleanArray selectedPositions) {
+//        this.selectedPositions = selectedPositions;
+//    }
 
-    public void setSelectedPositions(SparseBooleanArray selectedPositions) {
-        this.selectedPositions = selectedPositions;
-    }
-
-    public void removeItemChecked(int key){
-        selectedPositions.delete(key);
+    public void removeItemChecked(int position){
+        selectedPositions.delete(position);
     }
 
     public boolean isSelectable() {
@@ -38,10 +38,39 @@ public class MultiSelector {
     }
 
     public Integer[] hasSelected() {
-        Integer[] keys = new Integer[selectedPositions.size()];
+        Integer[] positions = new Integer[selectedPositions.size()];
         for (int i = 0;i <selectedPositions.size();i++){
-            keys[i] = selectedPositions.keyAt(i);
+            positions[i] = selectedPositions.keyAt(i);
         }
-        return keys;
+        if (positions.length > 0){
+            quickSort(positions , 0 , positions.length - 1);
+        }
+        return positions;
+    }
+
+    //快速排序
+    private void quickSort(Integer[] data,int start, int end){
+        int key = data[start];
+        int i = start;
+        int j = end;
+        while (i < j){
+            while (data[j] > key && j > i){
+                j--;
+            }
+            data[i] = data[j];
+
+            while (data[i] < key && i < j){
+                i++;
+            }
+            data[j] = data[i];
+        }
+        data[i] = key;
+        //递归
+        if (i - 1 > start){
+            quickSort(data,start,i - 1);
+        }
+        if (i + 1 < end){
+            quickSort(data,i + 1,end);
+        }
     }
 }

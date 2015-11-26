@@ -1,5 +1,6 @@
 package com.example.chenlian.utils;
 
+import android.support.design.widget.Snackbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -32,4 +33,11 @@ public class Utils {
         }
         return false;
     }
+
+
+    public static void showSnackbar(View view,String str){
+        Snackbar.make(view, str, Snackbar.LENGTH_SHORT)
+                .setAction("Action", null).show();
+    }
+
 }

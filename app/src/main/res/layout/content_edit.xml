@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="4"
+    android:weightSum="9"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.chenlian.activity.EditActivity"
     tools:showIn="@layout/activity_edit">
@@ -15,7 +15,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
+        android:layout_weight="8"
         android:background="@color/light_grey_1">
 
         <ScrollView
@@ -34,10 +34,10 @@
                     android:id="@+id/iv_picture"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
-                    android:layout_gravity="center"
-                    android:src="@drawable/g18" />
+                    android:src="@drawable/ic_add_to_photos_black_24dp" />
             </FrameLayout>
 
             <!--<VideoView-->
@@ -58,22 +58,59 @@
 
         </ScrollView>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom">
+
+            <com.example.chenlian.view.RecorderButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_add_white_24dp" />
+
+            <TextView
+                android:id="@+id/show_record_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal|bottom"
+                android:textColor="@android:color/black"
+                android:text="00:00" />
+
+            <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_margin="6dp"
-            android:scaleType="fitCenter"
-            android:src="@android:drawable/ic_input_add" />
+            android:src="@drawable/ic_clear_white_24dp"
+            android:id="@+id/cancel_record"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/fab"
+            android:layout_toEndOf="@+id/fab"
+            android:background="?attr/colorPrimary"/>
 
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_done_white_24dp"
+                android:id="@+id/save_record"
+                android:background="?attr/colorPrimary"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/fab"
+                android:layout_toStartOf="@+id/fab" />
+
+        </RelativeLayout>
     </FrameLayout>
 
-    <include layout="@layout/shadow_layout_down"/>
+    <include layout="@layout/shadow_layout_down" />
+
     <!--<view-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="2dp"-->
-        <!--android:background="@drawable/shadow_down" />-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="2dp"-->
+    <!--android:background="@drawable/shadow_down" />-->
 
     <ScrollView
         android:layout_width="match_parent"
@@ -81,26 +118,28 @@
         android:layout_weight="1">
 
         <!--<com.rengwuxian.materialedittext.MaterialEditText-->
-        <!--android:id="@+id/mdt_write"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_margin="4dp"-->
-        <!--app:met_pirmaryColor="?attr/colorPrimary"-->
-        <!--app:met_floatingLabel="highlight"-->
-        <!--app:met_floatingLabelText="Content"-->
-        <!--app:met_floatingLabelTextColor="?attr/colorPrimary"-->
-        <!--android:hint="在这里输入内容..."-->
-        <!--android:lineSpacingExtra="4dp"-->
-        <!--app:met_hideUnderline="true" />-->
+            <!--android:id="@+id/et_write"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="4dp"-->
+            <!--android:hint="@string/writeHere"-->
+            <!--android:lineSpacingExtra="4dp"-->
+            <!--app:met_floatingLabel="highlight"-->
+            <!--app:met_floatingLabelText="Content"-->
+            <!--app:met_floatingLabelTextColor="?attr/colorPrimary"-->
+            <!--app:met_hideUnderline="true"-->
+            <!--app:met_pirmaryColor="?attr/colorPrimary" />-->
+
         <EditText
-            android:id="@+id/et_write"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:background="@null"
-            android:textColor="@android:color/black"
-            android:hint="@string/writeHere"
-            android:textSize="16dip"
-            android:lineSpacingExtra="4dp" />
+        android:id="@+id/et_write"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@null"
+        android:textColor="@android:color/black"
+        android:hint="@string/writeHere"
+        android:textSize="16dip"
+        android:lineSpacingExtra="4dp" />
+
     </ScrollView>
 </LinearLayout>

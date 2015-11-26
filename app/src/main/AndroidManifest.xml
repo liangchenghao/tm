@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.chenlian.myapplication" >
+    package="com.example.chenlian.myapplication">
 
     <!-- 增加文件存储和访问摄像头的权限 -->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
@@ -9,19 +9,20 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.CAPTURE_AUDIO_OUTPUT"/>
+    <uses-permission android:name="android.permission.CAPTURE_AUDIO_OUTPUT" />
 
     <uses-feature android:name="android.hardware.Camera" />
 
     <application
+        android:name="com.example.chenlian.application.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/BlueTheme" >
+        android:theme="@style/BlueTheme">
         <activity
             android:name="com.example.chenlian.activity.HomeActivity"
-            android:label="@string/title_activity_home" >
+            android:label="@string/title_activity_home">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,8 +31,7 @@
         </activity>
         <activity
             android:name="com.example.chenlian.activity.SettingsActivity"
-            android:label="@string/title_activity_settings" >
-        </activity>
+            android:label="@string/title_activity_settings"/>
         <activity
             android:name="com.example.chenlian.activity.EditActivity"
             android:label="@string/title_activity_edit"
@@ -40,7 +40,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.chenlian.activity.HomeActivity" />
         </activity>
-        <activity android:name="com.example.chenlian.activity.ResActivity"/>
+        <activity android:name="com.example.chenlian.activity.ResActivity" />
+
+        <activity
+            android:name="com.example.chenlian.activity.SpaceImageDetailActivity"
+            android:theme="@style/SpaceImageDetail"/>
     </application>
 
 </manifest>

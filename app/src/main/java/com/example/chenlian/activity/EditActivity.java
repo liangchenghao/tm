@@ -11,6 +11,8 @@ import android.hardware.Camera;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -23,13 +25,16 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chenlian.flag.Actor;
+import com.example.chenlian.manager.PlayerManager;
 import com.example.chenlian.myapplication.R;
 import com.example.chenlian.utils.FileUtil;
 import com.example.chenlian.utils.ImageUtil;
 import com.example.chenlian.utils.Utils;
+import com.example.chenlian.view.RecorderButton;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
@@ -49,22 +54,24 @@ public class EditActivity extends BaseActivity {
 
     @ViewInject(R.id.toolbar)
     Toolbar toolbar;
-//    @ViewInject(R.id.iv_media)
+    //    @ViewInject(R.id.iv_media)
 //    ImageView ivMedia;
     @ViewInject(R.id.iv_picture)
-ImageView ivPicture;
-//    @ViewInject(R.id.vv_video)
+    ImageView ivPicture;
+    //    @ViewInject(R.id.vv_video)
 //    VideoView vvVideo;
     @ViewInject(R.id.fab)
-FloatingActionButton fab;
+    RecorderButton fab;
     @ViewInject(R.id.et_write)
     EditText et_content;
+    @ViewInject(R.id.show_record_time)
+    TextView txt_showRecordTime;
 
     private Camera mCamera;
-    private MediaRecorder mMediaRecorder;
     public Actor actor = new Actor();
     private Uri imageFileUri;
     private Intent intent;
+    PlayerManager playerManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,19 +81,72 @@ FloatingActionButton fab;
         initToolbar();
 
         intent = getIntent();
+        playerManager = new PlayerManager();
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnRecorderButtonListener(new RecorderButton.RecoderbuttonListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onFinish(int time, String filePath) {
+                StringBuffer length = new StringBuffer();
+                if (time / 60 < 10) {
+                    length.append("0" + time / 60);
+                } else {
+                    length.append(time / 60);
+                }
+                length.append(":");
+                if (time % 60 < 10) {
+                    length.append("0" + time % 60);
+                } else {
+                    length.append(time % 60);
+                }
+                txt_showRecordTime.setText(length);
+                playerManager.fileDelete();
+                playerManager.setFilePath(filePath);
+                actor.setRecoderPath(filePath);
             }
         });
+
+        txt_showRecordTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playerManager.start();
+            }
+        });
+
+        if (intent.getIntExtra("go_camera", 9) == 543) {
+            captureImages();
+        }
+
+        if (intent.getExtras() != null){
+            if (!intent.getExtras().isEmpty()){
+                actor = (Actor) intent.getExtras().getSerializable("edit_actor");
+                if (actor.getMediaPath() != null){
+                    ContentResolver resolver = getContentResolver();
+                    //照片的原始资源路径地址
+                    Uri selectedImage = Uri.parse(actor.getMediaPath());
+
+                    try {
+                        Bitmap photo = MediaStore.Images.Media.getBitmap(resolver, selectedImage);
+                        if (photo != null) {
+                            Bitmap smallBitmap = ImageUtil.zoomBitmap(photo);
+                            photo.recycle();
+
+                            ivPicture.setImageBitmap(smallBitmap);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (actor.getDescription() != null){
+                    et_content.setText(actor.getDescription());
+                }
+            }
+        }
     }
 
     @OnClick(R.id.iv_picture)
     public void showChoseDialog(View v) {
-        String[] items = new String[]{"Gallery", "Image", "video"};
+        String[] items = new String[]{"Gallery", "Image"};
         AlertDialog.Builder dialog = new AlertDialog.Builder(EditActivity.this)
                 .setItems(items, new DialogInterface.OnClickListener() {
                     @Override
@@ -150,18 +210,18 @@ FloatingActionButton fab;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN){
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
-            if (Utils.isShouldHideInput(v,ev)){
+            if (Utils.isShouldHideInput(v, ev)) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null){
-                    imm.hideSoftInputFromWindow(v.getWindowToken(),0);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
             }
             return super.dispatchTouchEvent(ev);
         }
         //传递touchevent给别的组件
-        if (getWindow().superDispatchTouchEvent(ev)){
+        if (getWindow().superDispatchTouchEvent(ev)) {
             return true;
         }
         return onTouchEvent(ev);
@@ -180,21 +240,25 @@ FloatingActionButton fab;
                 confirmEditor();
                 return true;
             case android.R.id.home:
-                showFinishDialog(this,"确定退出编辑吗？");
+                showFinishDialog(this, "确定退出编辑吗？");
                 return true;
             default:
                 return false;
         }
     }
 
-    private void confirmEditor(){
-        if (!et_content.getText().toString().isEmpty()){
+    private void confirmEditor() {
+        if (!et_content.getText().toString().isEmpty()) {
             actor.setDescription(et_content.getText().toString());
         }
 
-        LogUtils.v("editactivity>>>>>>>>>>>"+ actor.toString());
+        LogUtils.v("editactivity>>>>>>>>>>>" + actor.toString());
 
-        if (actor.getMediaPath() != null || actor.getDescription() != null){
+        if (newBitmap != null){
+            handler.sendEmptyMessage(SAVE_PHOTO_TO_SDCARD);
+        }
+
+        if (actor.getMediaPath() != null || actor.getDescription() != null || actor.getRecoderPath() != null) {
 
             String timeStamp = new SimpleDateFormat("yyyyMMdd HH:mm").format(new Date());
             actor.setTime(timeStamp);
@@ -205,12 +269,12 @@ FloatingActionButton fab;
             setResult(CONFIRM_EDIT, intent);
             LogUtils.v(">>>>>>>>>>edit actor is no null");
             finish();
-        }else {
-            showFinishDialog(this,"你没有编辑内容，确定退出吗？");
+        } else {
+            showFinishDialog(this, "你没有编辑内容，确定退出吗？");
         }
     }
 
-    private void showFinishDialog(Context context, String des){
+    private void showFinishDialog(Context context, String des) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
         dialog.setMessage(des)
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -221,6 +285,9 @@ FloatingActionButton fab;
                 }).setNegativeButton("取消", null)
                 .show();
     }
+
+    private Uri captureImage;//拍摄的照片存放路径
+    private Bitmap newBitmap;//拍摄后压缩的照片
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -278,8 +345,8 @@ FloatingActionButton fab;
                     LogUtils.v(">>>>>>>>>>edit actor.mediapath is no null" + selectedImage.toString());
 
                     try {
-                        Bitmap photo = MediaStore.Images.Media.getBitmap(resolver,selectedImage);
-                        if (photo != null){
+                        Bitmap photo = MediaStore.Images.Media.getBitmap(resolver, selectedImage);
+                        if (photo != null) {
                             Bitmap smallBitmap = ImageUtil.zoomBitmap(photo);
                             photo.recycle();
 
@@ -289,23 +356,41 @@ FloatingActionButton fab;
                         e.printStackTrace();
                     }
                     break;
+
                 case FileUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
 
-                    Uri captureImage = imageFileUri;
+                    captureImage = imageFileUri;
                     actor.setMediaPath(captureImage.toString());
 
                     LogUtils.v(">>>>>>>>>>edit actor.mediapath is no null" + captureImage.toString());
 
                     Bitmap bitmap = BitmapFactory.decodeFile(captureImage.getPath());
-                    Bitmap newBitmap = ImageUtil.zoomBitmap(bitmap);
+                    newBitmap = ImageUtil.zoomBitmap(bitmap);
                     bitmap.recycle();
 
                     ivPicture.setImageBitmap(newBitmap);
-                    FileUtil.savePhotoToSDCard(captureImage.getPath(),newBitmap);
                     break;
             }
-        }else {
-            Toast.makeText(this, "get result failed", Toast.LENGTH_SHORT).show();
         }
     }
+
+    public static final int SAVE_PHOTO_TO_SDCARD = 0;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case SAVE_PHOTO_TO_SDCARD:
+                    new Thread(runnable).start();
+                    break;
+            }
+        }
+    };
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            FileUtil.savePhotoToSDCard(captureImage.getPath(), newBitmap);
+        }
+    };
 }

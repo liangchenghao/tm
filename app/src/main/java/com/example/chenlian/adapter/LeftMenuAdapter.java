@@ -21,7 +21,8 @@ public class LeftMenuAdapter extends RecyclerView.Adapter<LeftMenuAdapter.MyView
 
     private OnItemClickListener mOnItemClickListener;
 
-    private int[] lvImg = {R.drawable.g8, R.drawable.g17, R.drawable.g18, R.drawable.g20};
+    private int[] lvImg = {R.drawable.ic_insert_photo_black_24dp, R.drawable.ic_insert_photo_black_24dp
+            , R.drawable.ic_insert_photo_black_24dp, R.drawable.ic_insert_photo_black_24dp};
     private String[] lvs = {"时光机", "相册", "设置", "相机"};
     private List<Actor> mDate = new ArrayList<>();
 

@@ -3,28 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".HomeActivity">
 
-    <item
-        android:id="@+id/action_del"
-        android:icon="@drawable/g18"
-        android:orderInCategory="85"
-        android:title="action_search"
-        app:showAsAction="ifRoom" />
+    <!--<item-->
+        <!--android:id="@+id/action_del"-->
+        <!--android:icon="@drawable/g18"-->
+        <!--android:orderInCategory="85"-->
+        <!--android:title="action_search"-->
+        <!--app:showAsAction="ifRoom" />-->
     <!--<item-->
     <!--android:id="@+id/action_settings"-->
     <!--android:orderInCategory="100"-->
     <!--android:title="action_settings"-->
     <!--app:showAsAction="never"/>-->
     <item
-        android:id="@+id/action_add"
+        android:id="@+id/action_camera"
         android:orderInCategory="80"
         android:title="action_camera"
-        android:icon="@drawable/g20"
+        android:icon="@drawable/ic_photo_camera_white_24dp"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_edit"
-        android:icon="@drawable/ic_done_white_24dp"
+        android:icon="@drawable/ic_add_white_24dp"
         android:orderInCategory="90"
         android:title="action_edit"
         app:showAsAction="always" />
 </menu>
-<!-- From: file:/D:/AS%20workspace/MyApplication/app/src/main/res/menu/menu_main.xml -->
+<!-- From: file:/I:/TimeMachine/tm/app/src/main/res/menu/menu_main.xml -->

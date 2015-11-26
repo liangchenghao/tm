@@ -55,8 +55,7 @@
         <item name="android:textColor">@android:color/black</item>
     </style>
 
-    <style name="popupMenuStyle" parent="Base.Widget.AppCompat.PopupMenu.Overflow">
-    </style>
+    <style name="popupMenuStyle" parent="Base.Widget.AppCompat.PopupMenu.Overflow"></style>
 
     <style name="AutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
         <item name="android:textColor">@android:color/white</item>
@@ -186,6 +185,15 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsFloating">true</item>
     </style>
+
     <style name="WhiteActionBack" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
     <style name="BlueTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="SpaceImageDetail">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
 </resources>

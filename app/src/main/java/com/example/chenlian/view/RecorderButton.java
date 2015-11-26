@@ -9,25 +9,28 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.example.chenlian.manager.RecoderManager;
+import com.example.chenlian.manager.RecorderManager;
+import com.lidroid.xutils.util.LogUtils;
 
 import java.io.File;
+
+import static com.example.chenlian.utils.Utils.showSnackbar;
 
 /**
  * Created by Administrator on 2015/11/12.
  */
-public class RecorderButton extends FloatingActionButton implements RecoderManager.RecoderManagerListener {
+public class RecorderButton extends FloatingActionButton implements RecorderManager.RecoderManagerListener {
 
     //按钮的三个状态
     private static final int STATE_NORMAL = 1;
     private static final int STATE_RECODING = 2;
-    private static final int STATE_CACLE = 3;
+    private static final int STATE_CANCLE = 3;
 
     private int mCurState = STATE_NORMAL;//记录当前状态
 
     private int Y = 50;//限定手指移动的上下宽度
 
-    private RecoderManager mRecodierManager;
+    private RecorderManager mRecodierManager;
 
     private boolean isRecoding = false;
     private boolean isLongClick = false;//是否长按
@@ -54,7 +57,7 @@ public class RecorderButton extends FloatingActionButton implements RecoderManag
 
         String path = recorderDir.getPath();
 
-        mRecodierManager = RecoderManager.getRecoderManager(path);
+        mRecodierManager = RecorderManager.getRecoderManager(path);
         mRecodierManager.setOnRecoderManagerListener(this);
 
         setOnLongClickListener(new OnLongClickListener() {
@@ -62,6 +65,7 @@ public class RecorderButton extends FloatingActionButton implements RecoderManag
             public boolean onLongClick(View view) {
                 isLongClick = true;
                 mRecodierManager.recoderPrepared();
+                showSnackbar(getRootView(),"start to record");
                 return false;
             }
         });
@@ -129,7 +133,7 @@ public class RecorderButton extends FloatingActionButton implements RecoderManag
                     break;
                 case STATE_RECODING:
                     break;
-                case STATE_CACLE:
+                case STATE_CANCLE:
                     break;
             }
         }
@@ -137,13 +141,29 @@ public class RecorderButton extends FloatingActionButton implements RecoderManag
 
     private boolean wantCancel(int x, int y) {
         if (x < 0 || x > getWidth()) {
+            LogUtils.v(">>>>>>>>划得太远了");
             return true;
         }
 
         if (y < -Y || y > getHeight() + Y) {
+            LogUtils.v(">>>>>>>>划得太远了");
             return true;
         }
         return false;
+//        int[] leftTop = {0,0};
+//        //获取输入框当前的location位置
+//        getLocationInWindow(leftTop);
+//        int left = leftTop[0] - Y;
+//        int top = leftTop[1] - Y;
+//        int bottom = top + getHeight() + 2 * Y;
+//        int right = left + getWidth() + 2 * Y;
+//        if (x > left && x < right
+//                && y > top && y < bottom){
+//            return false;
+//        }else {
+//            LogUtils.v(">>>>>>>>划得太远了");
+//            return true;
+//        }
     }
 
     //捕捉按钮点击事件
@@ -159,7 +179,7 @@ public class RecorderButton extends FloatingActionButton implements RecoderManag
             case MotionEvent.ACTION_MOVE:
                 if (isRecoding) {
                     if (wantCancel(x, y)) {
-                        changeState(STATE_CACLE);
+                        changeState(STATE_CANCLE);
                     } else {
                         changeState(STATE_RECODING);
                     }
@@ -167,28 +187,28 @@ public class RecorderButton extends FloatingActionButton implements RecoderManag
                 break;
             case MotionEvent.ACTION_UP:
                 //没有触发长按按钮
-                if (isLongClick){
+                if (!isLongClick){
                     reset();
                     return super.onTouchEvent(event);
-                }
-                //没有准备好录音器或录音时间太短
-                if (isRecoding || mTime < 0.6f){
+                }else if (mTime < 0.6f){ //没有准备好录音器或录音时间太短
                     mRecodierManager.cancel();
                     mHandler.sendEmptyMessageDelayed(DIALOG_DISS,2000);
+                    showSnackbar(getRootView(),"cancel record cause by no prepared or short");
                 }else if (mCurState == STATE_RECODING){//正常录音结束
                     mRecodierManager.release();
                     //返回录音的时长和文件路径
                     if (mListener != null){
-                        mListener.onFinish((int) mTime,mRecodierManager.getPath());
+                       mListener.onFinish((int) mTime,mRecodierManager.getPath());
                     }
-                }else if (mCurState == STATE_CACLE){//取消录音
+                    showSnackbar(getRootView(),"finish recording");
+                }else if (mCurState == STATE_CANCLE){//取消录音
                     mRecodierManager.cancel();
+                    showSnackbar(getRootView(),"cancel record");
                 }
                 //各种设置复位
                 reset();
                 break;
         }
-
         return super.onTouchEvent(event);
     }
 }
