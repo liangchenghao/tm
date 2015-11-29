@@ -92,11 +92,6 @@ public class RecorderManager {
         }
     }
 
-    public String recorderPause(){
-        release();
-        return mCurPath;
-    }
-
     //通过音频获得声音的级别，转化为1~maxLevel之间
     public int getVoiceLevel(int maxLevel){
         if (mMediaRecoder != null){

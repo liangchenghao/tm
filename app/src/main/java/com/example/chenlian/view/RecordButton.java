@@ -9,8 +9,11 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.example.chenlian.manager.RecorderManager;
+import com.example.chenlian.myapplication.R;
 
 import java.io.File;
+
+import static com.example.chenlian.utils.Utils.showSnackbar;
 
 /**
  * Created by Administrator on 2015/11/26.
@@ -33,6 +36,10 @@ public class RecordButton extends ImageButton implements RecorderManager.Recoder
     //用来传递数据的实体
     public interface RecordButtonListener {
         void onFinish(int time, String filePath);
+    }
+
+    public void setOnRecordButtonListener(RecordButtonListener listener) {
+        this.mListener = listener;
     }
 
     public RecordButton(Context context) {
@@ -58,11 +65,27 @@ public class RecordButton extends ImageButton implements RecorderManager.Recoder
             public void onClick(View view) {
                 if (!isRecording){
                     mRecorderManager.recoderPrepared();
+                    RecordButton.this.setImageResource(R.drawable.ic_info_black_24dp);
                     isRecording = true;
+                }else if (mTime < 0.6f){ //没有准备好录音器或录音时间太短
+                    mRecorderManager.cancel();
+                    RecordButton.this.setImageResource(R.drawable.ic_add_white_24dp);
+                    isRecording = false;
+                    showSnackbar(getRootView(),"cancel record cause by no prepared or short");
                 }else {
+                    mRecorderManager.release();
+                    RecordButton.this.setImageResource(R.drawable.ic_add_white_24dp);
+                    //返回录音的时长和文件路径
+                    if (mListener != null){
+                        mListener.onFinish((int) mTime,mRecorderManager.getPath());
+                    }
+                    mTime = 0;
+                    isRecording = false;
                 }
             }
         });
+
+
     }
 
     private static final int MEDIA_PREPARED = 0;

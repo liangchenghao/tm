@@ -34,6 +34,7 @@ import com.example.chenlian.myapplication.R;
 import com.example.chenlian.utils.FileUtil;
 import com.example.chenlian.utils.ImageUtil;
 import com.example.chenlian.utils.Utils;
+import com.example.chenlian.view.RecordButton;
 import com.example.chenlian.view.RecorderButton;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.util.LogUtils;
@@ -61,11 +62,13 @@ public class EditActivity extends BaseActivity {
     //    @ViewInject(R.id.vv_video)
 //    VideoView vvVideo;
     @ViewInject(R.id.fab)
-    RecorderButton fab;
+    RecordButton fab;
     @ViewInject(R.id.et_write)
     EditText et_content;
     @ViewInject(R.id.show_record_time)
     TextView txt_showRecordTime;
+    @ViewInject(R.id.cancel_record)
+    ImageView cancelRecord;
 
     private Camera mCamera;
     public Actor actor = new Actor();
@@ -83,21 +86,10 @@ public class EditActivity extends BaseActivity {
         intent = getIntent();
         playerManager = new PlayerManager();
 
-        fab.setOnRecorderButtonListener(new RecorderButton.RecoderbuttonListener() {
+        fab.setOnRecordButtonListener(new RecordButton.RecordButtonListener() {
             @Override
             public void onFinish(int time, String filePath) {
-                StringBuffer length = new StringBuffer();
-                if (time / 60 < 10) {
-                    length.append("0" + time / 60);
-                } else {
-                    length.append(time / 60);
-                }
-                length.append(":");
-                if (time % 60 < 10) {
-                    length.append("0" + time % 60);
-                } else {
-                    length.append(time % 60);
-                }
+                StringBuffer length = txtShowPlayerTime(time);
                 txt_showRecordTime.setText(length);
                 playerManager.fileDelete();
                 playerManager.setFilePath(filePath);
@@ -112,6 +104,13 @@ public class EditActivity extends BaseActivity {
             }
         });
 
+        cancelRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playerManager.fileDelete();
+                txt_showRecordTime.setText("00:00");
+            }
+        });
         if (intent.getIntExtra("go_camera", 9) == 543) {
             captureImages();
         }
@@ -140,8 +139,30 @@ public class EditActivity extends BaseActivity {
                 if (actor.getDescription() != null){
                     et_content.setText(actor.getDescription());
                 }
+
+                if (actor.getRecoderPath() != null){
+                    playerManager.setFilePath(actor.getRecoderPath());
+                    StringBuffer length = txtShowPlayerTime(playerManager.player.getDuration());
+                    txt_showRecordTime.setText(length);
+                }
             }
         }
+    }
+
+    public StringBuffer txtShowPlayerTime(int time){
+        StringBuffer length = new StringBuffer();
+        if (time / 60 < 10) {
+            length.append("0" + time / 60);
+        } else {
+            length.append(time / 60);
+        }
+        length.append(":");
+        if (time % 60 < 10) {
+            length.append("0" + time % 60);
+        } else {
+            length.append(time % 60);
+        }
+        return length;
     }
 
     @OnClick(R.id.iv_picture)

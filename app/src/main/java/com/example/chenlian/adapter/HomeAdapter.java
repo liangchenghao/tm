@@ -78,24 +78,25 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
         LogUtils.v(">>>>>>>>>" + actor.toString());
 
         if (actor.getMediaPath() != null) {
-            try {
-                InputStream is = context.getContentResolver().openInputStream(Uri.parse(actor.getMediaPath()));
-                Bitmap bitmap = BitmapFactory.decodeStream(is);
-
-                LogUtils.v(">>>>>>>>>" + bitmap.toString());
-
-                Bitmap newBitmap = ImageUtil.zoomBitmap(bitmap);
-                bitmap.recycle();
-
-                holder.img.setVisibility(View.VISIBLE);
-                holder.img.setTag(actor.getMediaPath());
-                holder.img.setImageBitmap(newBitmap);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-//            holder.img.setTag(actor.getId());
+//            try {
+//                InputStream is = context.getContentResolver().openInputStream(Uri.parse(actor.getMediaPath()));
+//                Bitmap bitmap = BitmapFactory.decodeStream(is);
 //
+//                LogUtils.v(">>>>>>>>>" + bitmap.toString());
+//
+//                Bitmap newBitmap = ImageUtil.zoomBitmap(bitmap);
+//                bitmap.recycle();
+//
+//                holder.img.setVisibility(View.VISIBLE);
+//                holder.img.setTag(actor.getMediaPath());
+//                holder.img.setImageBitmap(newBitmap);
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            }
+
+            holder.img.setTag(actor.getMediaPath());
+            BitmapWorkerTask task = new BitmapWorkerTask();
+            task.execute(actor.getMediaPath());
 //            if ()
         }else {
             holder.img.setVisibility(View.GONE);

@@ -9,7 +9,7 @@ import java.io.IOException;
  * Created by Administrator on 2015/11/16.
  */
 public class PlayerManager {
-    private MediaPlayer player; // 定义多媒体对象
+    public MediaPlayer player; // 定义多媒体对象
     private String filePath;
     public PlayerManager(){
         player = new MediaPlayer();
