@@ -18,13 +18,17 @@ public class PlayerManager {
     //设置播放文件的绝对路径
     public void setFilePath(String path){
         this.filePath = path;
+        try {
+            player.setDataSource(filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     //播放音乐
     public void start() {
         player.reset();// 重置播放器
         try {
-            player.setDataSource(filePath);
             player.prepare();
             player.start();
             // setOnCompletionListener 当当前多媒体对象播放完成时发生的事件

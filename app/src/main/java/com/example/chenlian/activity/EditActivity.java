@@ -108,6 +108,7 @@ public class EditActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 playerManager.fileDelete();
+                actor.setRecoderPath(null);
                 txt_showRecordTime.setText("00:00");
             }
         });
@@ -142,7 +143,8 @@ public class EditActivity extends BaseActivity {
 
                 if (actor.getRecoderPath() != null){
                     playerManager.setFilePath(actor.getRecoderPath());
-                    StringBuffer length = txtShowPlayerTime(playerManager.player.getDuration());
+                    LogUtils.v(">>>>>>>>>>>>>>>" + playerManager.player.getDuration());
+                    StringBuffer length = txtShowPlayerTime((playerManager.player.getDuration()/1000));
                     txt_showRecordTime.setText(length);
                 }
             }

@@ -3,4 +3,4 @@
     android:duration="6000"
     android:propertyName="rotation"
     android:valueFrom="0"
-    android:valueTo="0" /><!-- From: file:/I:/TimeMachine/tm/android5.0/src/main/res/anim/vector_rotation.xml -->
+    android:valueTo="0" /><!-- From: file:/D:/TimeMachine/tm/android5.0/src/main/res/anim/vector_rotation.xml -->

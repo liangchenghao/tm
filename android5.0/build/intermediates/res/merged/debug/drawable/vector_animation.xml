@@ -8,4 +8,4 @@
     <target
             android:name="rotation"
             android:animation="@anim/vector_rotation" />
-</animated-vector><!-- From: file:/I:/TimeMachine/tm/android5.0/src/main/res/drawable/vector_animation.xml -->
+</animated-vector><!-- From: file:/D:/TimeMachine/tm/android5.0/src/main/res/drawable/vector_animation.xml -->
